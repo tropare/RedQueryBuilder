@@ -86,7 +86,7 @@ public class CommandSuggestBox extends SimplePanel implements HasConstrainedValu
                 if (label.matches("^\\*.*\\*$")) {
                     lastHeading = label.replaceAll("^\\*|\\*$", "");
                 } else {
-                    if (query == null || label.toLowerCase().startsWith(query)) {
+                    if (query == null || label.toLowerCase().contains(query)) {	// GGC 2019-09-17 startsWith
                         suggestions.add(cs);
                         headings.add(lastHeading);
                         lastHeading = null;

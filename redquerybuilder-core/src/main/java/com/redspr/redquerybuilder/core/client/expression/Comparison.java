@@ -35,6 +35,26 @@ public class Comparison extends Condition {
     public Comparison(Session session2) {
         super(session2);
 
+        compareType = setDefaultLeft();
+        setRight(new Parameter(getSession()));
+        init();
+    }
+
+    public Comparison(Session session2, String compareType2,
+            final Expression left2, final Expression right2) {
+        super(session2);
+        if (left2 == null) {
+        	setDefaultLeft();
+        }
+        else {
+        	setLeft(left2);
+        }
+        setRight(right2);
+        compareType = compareType2;
+        init();
+    }
+
+    private String setDefaultLeft() {
         // XXX why do this defaulting here? Not just do it in ExpressionColumn?
         TableFilter tf = getSession().getFilters().get(0);
         Column col = null;
@@ -50,20 +70,10 @@ public class Comparison extends Condition {
 
         setLeft(new ExpressionColumn(getSession(), null, tf.getAlias(),
                 col.getName()));
-        setRight(new Parameter(getSession()));
-        compareType = col.getType().getOperators()[0].getName();
-        init();
+    	
+        return col.getType().getOperators()[0].getName();
     }
-
-    public Comparison(Session session2, String compareType2,
-            final Expression left2, final Expression right2) {
-        super(session2);
-        setLeft(left2);
-        setRight(right2);
-        compareType = compareType2;
-        init();
-    }
-
+    
     private void init() {
         HorizontalPanel v = new HorizontalPanel();
         v.addStyleName("rqbComparison");
@@ -195,13 +205,39 @@ public class Comparison extends Condition {
         return getParentExpression().remove(this);
     }
 
+    // GGC 2019-09-17 check if xleft, if so and op is equal (=), then we add
+    // a new ConditionAndOr with OR and fill in xleft of that.  If not equal (<>), then
+    // make it an AND and fill xleft
     public void add() {
-        ConditionAndOr andOr = new ConditionAndOr(getSession(), 0, new Nop(),
-                new Nop());
+    	
+        // GGC ConditionAndOr andOr = new ConditionAndOr(getSession(), ConditionAndOr.AND, new Nop(), new Nop());
+    	int myop = ConditionAndOr.AND;
+    	Operator op = getOperator();
+    	String sOp = op.getName();
+    	if (sOp == "=") {
+    		myop = ConditionAndOr.OR;
+    	}
+    	
+    	Expression expLeft = getLeft();
+        if (expLeft instanceof ExpressionColumn) {
+            ExpressionColumn ec = (ExpressionColumn) expLeft;
+            
+            expLeft = new ExpressionColumn(getSession(), ec.getSchemaName(), ec.getTableAlias(), ec.getColumnName());
+        }
+        else
+        	expLeft = null;
+    	
+        ConditionAndOr andOr = new ConditionAndOr(getSession(), myop, new Nop(), new Nop());
         getParentExpression().replace(this, andOr);
         andOr.setLeft(this);
 
-        andOr.setRight(new Comparison(getSession()));
+        if (sOp == "<=") {
+        	sOp = ">=";
+        }
+        else if (sOp == ">=") {
+        	sOp = "<=";
+        }
+        andOr.setRight(new Comparison(getSession(), sOp, expLeft,new Parameter(getSession())));
     }
 
     @Override

@@ -70,9 +70,17 @@ public class ExpressionColumn extends Expression implements TableEventHandler {
         return getSession().resolveColumn(tableAlias, getColumnName());
     }
 
+    // GGC 2019-09-17
     public String getColumnName() {
         return columnName;
     }
+    public String getSchemaName() {
+    	return schemaName;
+    }
+    public String getTableAlias() {
+    	return tableAlias;
+    }
+    // end GGC 2019-09-17
 
     @Override
     public void onDirty() {

@@ -1,6 +1,6 @@
 
-{meta : {
-        tables : [ {
+{"meta" : {
+      "tables" : [ {
             "name" : "person",
             "label" : "Person",
             "columns" : [ {
@@ -8,10 +8,10 @@
                 "label" : "Date of birth",
                 "type" : "DATE"
             }  ],
-            fks : []
+            "fks" : []
         } ],
 
-        types : [ {
+       "types" : [ {
             "name" : "DATE",
             "editor" : "DATE",
             "operators" : [ {

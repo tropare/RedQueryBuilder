@@ -1,6 +1,6 @@
 RedQueryBuilderFactory.create({
-	meta : {
-		tables : [ {
+	"meta" : {
+		"tables" : [ {
 			"name" : "PERSON",
 			"label" : "Person",
 			"columns" : [ {
@@ -31,10 +31,10 @@ RedQueryBuilderFactory.create({
 				"label" : "Category",
 				"type" : "REF",
 			}  ],
-			fks : []
+			"fks" : []
 		} ],
 
-		types : [ {
+		"types" : [ {
 			"name" : "STRING",
 			"editor" : "TEXT",
 			"operators" : [ {
