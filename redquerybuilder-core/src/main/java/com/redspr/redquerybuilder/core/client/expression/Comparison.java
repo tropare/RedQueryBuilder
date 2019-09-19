@@ -237,6 +237,12 @@ public class Comparison extends Condition {
         else if (sOp == ">=") {
         	sOp = "<=";
         }
+        else if (sOp == "<") {
+        	sOp = ">";
+        }
+        else if (sOp == ">") {
+        	sOp = "<";
+        }
         andOr.setRight(new Comparison(getSession(), sOp, expLeft,new Parameter(getSession())));
     }
 
